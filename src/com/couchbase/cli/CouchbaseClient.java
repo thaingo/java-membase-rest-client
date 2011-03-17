@@ -177,9 +177,14 @@ public class CouchbaseClient {
 		return false;
 	}
 	
+	/**
+	 * Fails over a node in the cluster.
+	 * @param host The node to fail over.
+	 * @return An http rrsponse from the cluster.
+	 */
 	public CouchbaseResponse failover(String host) {
 		PostRequest message = new PostRequest(hostname, "/controller/failOver", username, password);
-		message.addParam("optNode", "ns_1@10.2.1.54");
+		message.addParam("otpNode", ("ns_1@" + host));
 		CouchbaseResponse response = conn.sendRequest(message);
 		return response;
 	}
@@ -310,8 +315,8 @@ public class CouchbaseClient {
 		//System.out.println(r.getBody());
 		
 		//System.out.println(client.bucketDelete("bucket").getReturnCode());
-		//System.out.println(client.failover("10.2.1.54").getBody());
-		System.out.println(client.serverReadd("10.2.1.54").getBody());
+		System.out.println(client.failover("10.2.1.54").getBody());
+		/*System.out.println(client.serverReadd("10.2.1.54").getBody());
 		System.out.println(client.rebalance(null).getBody());
 		
 		while (client.isRebalancing()) {
@@ -322,7 +327,7 @@ public class CouchbaseClient {
 				e.printStackTrace();
 			}
 			System.out.println("Rebalancing");
-		}
+		}*/
 		//System.out.println(client.pools());
 		//System.out.println("\n\n" + client.poolsDetails());
 		//System.out.println("\n\n" + client.bucket_list());
