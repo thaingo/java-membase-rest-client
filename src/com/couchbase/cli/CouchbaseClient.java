@@ -281,7 +281,7 @@ public class CouchbaseClient {
 		message.addParam("authType", authType.auth);
 		message.addParam("replicaNumber", (replicas + ""));
 		message.addParam("proxyPort", (port + ""));
-		if (authType.equals("sasl"))
+		if (authType == Auth.SASL)
 			message.addParam("saslpassword", password);
 		CouchbaseResponse response = conn.sendRequest(message);
 		return response;
@@ -303,7 +303,7 @@ public class CouchbaseClient {
 		message.addParam("authType", authType.auth);
 		message.addParam("proxyPort", (port + ""));
 		message.addParam("bucketType", "memcached");
-		if (authType.equals("sasl"))
+		if (authType == Auth.SASL)
 			message.addParam("saslpassword", password);
 		CouchbaseResponse response = conn.sendRequest(message);
 		return response;
@@ -323,7 +323,7 @@ public class CouchbaseClient {
 		message.addParam("ramQuotaMB", (memorySizeMB + ""));
 		message.addParam("authType", authType.auth);
 		message.addParam("proxyPort", (port + ""));
-		if (authType.equals("sasl"))
+		if (authType == Auth.SASL)
 			message.addParam("saslpassword", password);
 		CouchbaseResponse response = conn.sendRequest(message);
 		return response;
@@ -346,42 +346,5 @@ public class CouchbaseClient {
 	 */
 	public String bucketFlush() {
 		return "Not implemented by Couchbase REST API";
-	}
-	
-	public static void main(String args[]) {
-		String username = "Administrator";
-		String password = "password";
-		CouchbaseClient client = new CouchbaseClient("10.2.1.16", username, password);
-		
-		//System.out.println(client.configureDataPath("/var/opt/membase/1.6.5/data/ns_1").getBody());
-		//System.out.println(client.configureClusterSize(1024).getBody());
-		//System.out.println(client.setCredentials(username, password).getBody());
-		//System.out.println(client.listServers());
-		//System.out.println(client.bucketEdit("bucket2", 128, Auth.NONE, 11214, "password").getBody());
-		//System.out.println(client.createMemcachedBucket("bucket4", 128, Auth.NONE, 11221, "password").getBody());
-		
-		//CouchbaseResponse r = client.getBucketInfo("bucket3");
-		//System.out.println(r.getReturnCode());
-		//System.out.println(r.getBody());
-		
-		//System.out.println(client.bucketDelete("bucket").getReturnCode());
-		/*System.out.println(client.failover("10.2.1.54").getBody());
-		System.out.println(client.serverReadd("10.2.1.54").getBody());
-		System.out.println(client.rebalance(null).getBody());
-		System.out.println(client.rebalance(null).getBody());
-		
-		while (client.isRebalancing()) {
-			try {
-				Thread.sleep(5000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("Rebalancing");
-		}*/
-		//System.out.println(client.pools());
-		//System.out.println("\n\n" + client.poolsDetails());
-		//System.out.println("\n\n" + client.bucket_list());
-		//System.out.println("\n\n" + client.getBucketInfo("default"));
 	}
 }
