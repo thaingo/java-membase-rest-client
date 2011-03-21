@@ -4,6 +4,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.couchbase.cli.internal.Auth;
 import com.couchbase.cli.message.DeleteRequest;
 import com.couchbase.cli.message.GetRequest;
 import com.couchbase.cli.message.PostRequest;
@@ -268,11 +269,11 @@ public class CouchbaseClient {
 	 * @param password The password for the bucket.
 	 * @return An http response from the cluster.
 	 */
-	public CouchbaseResponse createMembaseBucket(String name, int memorySizeMB, String authType, int replicas, int port, String password) {
+	public CouchbaseResponse createMembaseBucket(String name, int memorySizeMB, Auth authType, int replicas, int port, String password) {
 		PostRequest message = new PostRequest(hostname, "/pools/default/buckets", username, password);
 		message.addParam("name", name);
 		message.addParam("ramQuotaMB", (memorySizeMB + ""));
-		message.addParam("authType", authType);
+		message.addParam("authType", authType.auth);
 		message.addParam("replicaNumber", (replicas + ""));
 		message.addParam("proxyPort", (port + ""));
 		if (authType.equals("sasl"))
@@ -290,11 +291,11 @@ public class CouchbaseClient {
 	 * @param password The password for the bucket.
 	 * @return An http response from the server.
 	 */
-	public CouchbaseResponse createMemcachedBucket(String name, int memorySizeMB, String authType, int port, String password) {
+	public CouchbaseResponse createMemcachedBucket(String name, int memorySizeMB, Auth authType, int port, String password) {
 		PostRequest message = new PostRequest(hostname, "/pools/default/buckets", username, password);
 		message.addParam("name", name);
 		message.addParam("ramQuotaMB", (memorySizeMB + ""));
-		message.addParam("authType", authType);
+		message.addParam("authType", authType.auth);
 		message.addParam("proxyPort", (port + ""));
 		message.addParam("bucketType", "memcached");
 		if (authType.equals("sasl"))
@@ -335,8 +336,8 @@ public class CouchbaseClient {
 		//System.out.println(client.configureClusterSize(1024).getBody());
 		//System.out.println(client.setCredentials(username, password).getBody());
 		//System.out.println(client.listServers());
-		//System.out.println(client.createMembaseBucket("bucket3", 128, "none", 1, 11214, "password").getBody());
-		//System.out.println(client.createMemcachedBucket("bucket4", 128, "none", 11221, "password").getBody());
+		//System.out.println(client.createMembaseBucket("bucket3", 128, Auth.NONE, 1, 11214, "password").getBody());
+		//System.out.println(client.createMemcachedBucket("bucket4", 128, Auth.NONE, 11221, "password").getBody());
 		
 		//CouchbaseResponse r = client.getBucketInfo("bucket3");
 		//System.out.println(r.getReturnCode());
