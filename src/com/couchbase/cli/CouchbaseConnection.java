@@ -6,10 +6,13 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.couchbase.cli.message.Request;
 
 public class CouchbaseConnection {
+	private static final Logger LOG = LoggerFactory.getLogger(CouchbaseConnection.class);
 	HttpClient client;
 	
 	public CouchbaseConnection() {
@@ -21,13 +24,10 @@ public class CouchbaseConnection {
 		try {
 			response = client.execute(msg.getRequest());
 		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Protocol error while sending request");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.error("Connection error while sending request");
 		}
-		
 		return new CouchbaseResponse(response);
 	}
 }
