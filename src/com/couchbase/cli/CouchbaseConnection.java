@@ -11,14 +11,25 @@ import org.slf4j.LoggerFactory;
 
 import com.couchbase.cli.message.Request;
 
+/**
+ * Creates an http connection to a Couchbase server.
+ */
 public class CouchbaseConnection {
 	private static final Logger LOG = LoggerFactory.getLogger(CouchbaseConnection.class);
-	HttpClient client;
+	private HttpClient client;
 	
+	/**
+	 * Creates a connection to a Couchbase server.
+	 */
 	public CouchbaseConnection() {
 		client = new DefaultHttpClient();
 	}
 	
+	/**
+	 * Sends a REST request to the Couchbase server.
+	 * @param msg The REST message.
+	 * @return The response from the server.
+	 */
 	public CouchbaseResponse sendRequest(Request msg) {
 		HttpResponse response = null;
 		try {
