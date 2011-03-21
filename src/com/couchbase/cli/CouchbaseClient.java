@@ -263,7 +263,7 @@ public class CouchbaseClient {
 	 * Creates a new Membase bucket.
 	 * @param name The name of the bucket.
 	 * @param memorySizeMB The size of the bucket in megabytes.
-	 * @param authType "none" for no authentication, "sasl" for authentication.
+	 * @param authType The authorization type for the bucket.
 	 * @param replicas The number of replicas.
 	 * @param port The port to put the bucket on.
 	 * @param password The password for the bucket.
@@ -286,7 +286,7 @@ public class CouchbaseClient {
 	 * Creates a Memcached bucket.
 	 * @param name The name of the bucket.
 	 * @param memorySizeMB The size of the bucket in megabytes.
-	 * @param authType "none" for no authentication, "sasl" for authentication.
+	 * @param authType The authorization type for the bucket.
 	 * @param port The port number for the server to listen on.
 	 * @param password The password for the bucket.
 	 * @return An http response from the server.
@@ -304,8 +304,24 @@ public class CouchbaseClient {
 		return response;
 	}
 	
-	public void bucketEdit() {
-		
+	/**
+	 * Edits the properties of a bucket.
+	 * @param name The name of the bucket.
+	 * @param memorySizeMB The size of the bucket in megabytes.
+	 * @param authType The authorization type for the bucket.
+	 * @param port The port number for the bucket.
+	 * @param password The password for the bucket.
+	 * @return The http response from the server.
+	 */
+	public CouchbaseResponse bucketEdit(String name, int memorySizeMB, Auth authType, int port, String password) {
+		PostRequest message = new PostRequest(hostname, ("/pools/default/buckets/" + name), username, password);
+		message.addParam("ramQuotaMB", (memorySizeMB + ""));
+		message.addParam("authType", authType.auth);
+		message.addParam("proxyPort", (port + ""));
+		if (authType.equals("sasl"))
+			message.addParam("saslpassword", password);
+		CouchbaseResponse response = conn.sendRequest(message);
+		return response;
 	}
 	
 	/**
@@ -336,7 +352,7 @@ public class CouchbaseClient {
 		//System.out.println(client.configureClusterSize(1024).getBody());
 		//System.out.println(client.setCredentials(username, password).getBody());
 		//System.out.println(client.listServers());
-		//System.out.println(client.createMembaseBucket("bucket3", 128, Auth.NONE, 1, 11214, "password").getBody());
+		//System.out.println(client.bucketEdit("bucket2", 128, Auth.NONE, 11214, "password").getBody());
 		//System.out.println(client.createMemcachedBucket("bucket4", 128, Auth.NONE, 11221, "password").getBody());
 		
 		//CouchbaseResponse r = client.getBucketInfo("bucket3");
