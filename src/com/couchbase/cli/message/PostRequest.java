@@ -9,6 +9,9 @@ import org.apache.http.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Creates a Post message that can be sent to a Couchbase server.
+ */
 public class PostRequest implements Request {
 	private static final Logger LOG = LoggerFactory.getLogger(PostRequest.class);
 
@@ -16,12 +19,24 @@ public class PostRequest implements Request {
 	private String auth;
 	private String body = "";
 	
+	/**
+	 * Creates a post message that doesn't use base64 authentication
+	 * @param host The server to send data to.
+	 * @param url The url of REST call.
+	 */
 	public PostRequest(String host, String url) {
 		request = new HttpPost("http://" + host + ":8091" + url);
 		request.addHeader("Accept", "application/json");
 		request.addHeader("Content-Type", "application/x-www-form-urlencoded");
 	}
 	
+	/**
+	 * Creates a post message with base64 authentication.
+	 * @param host The server to send data to.
+	 * @param url The url of REST call.
+	 * @param username The user name for base64 authentication.
+	 * @param password The password for base64 authentication.
+	 */
 	public PostRequest(String host, String url, String username, String password) {
 		request = new HttpPost("http://" + host + ":8091" + url);
 		auth = new String((byte[])((new Base64()).encode((username + ":" + password).getBytes())));
@@ -32,13 +47,19 @@ public class PostRequest implements Request {
 		request.addHeader("Content-Type", "application/x-www-form-urlencoded");
 	}
 	
-	public void addParam(String key, String value) {
+	/**
+	 * Adds a parameter to be added to the body of the message.
+	 * @param name The name of the parameter.
+	 * @param value The value of the parameter.
+	 */
+	public void addParam(String name, String value) {
 		if (body.length() != 0) {
 			body = body + "&";
 		}
-		body = body + key + "=" + value;
+		body = body + name + "=" + value;
 	}
 	
+	@Override
 	public HttpUriRequest getRequest() {
 		try {
 			request.setEntity(new StringEntity(body));
