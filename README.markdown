@@ -1,0 +1,1 @@
+A java client that provides access to the membase rest api
