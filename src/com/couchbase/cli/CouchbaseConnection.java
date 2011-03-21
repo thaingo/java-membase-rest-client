@@ -1,11 +1,22 @@
 package com.couchbase.cli;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.ClientConnectionRequest;
+import org.apache.http.conn.ManagedClientConnection;
+import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.SingleClientConnManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +33,6 @@ public class CouchbaseConnection {
 	 * Creates a connection to a Couchbase server.
 	 */
 	public CouchbaseConnection() {
-		client = new DefaultHttpClient();
 	}
 	
 	/**
@@ -32,6 +42,8 @@ public class CouchbaseConnection {
 	 */
 	public CouchbaseResponse sendRequest(Request msg) {
 		HttpResponse response = null;
+		client = new DefaultHttpClient();
+
 		try {
 			response = client.execute(msg.getRequest());
 		} catch (ClientProtocolException e) {
