@@ -122,6 +122,11 @@ public class CouchbaseClient {
 		return response;
 	}
 	
+	/**
+	 * Re-adds a server back to the cluster that was previously failed over.
+	 * @param host The hostname of the server.
+	 * @return A http response from the cluster.
+	 */
 	public CouchbaseResponse serverReadd(String host) {
 		PostRequest message = new PostRequest(hostname, "/controller/reAddNode", username, password);
 		message.addParam("otpNode", ("ns_1@" + host));
@@ -166,7 +171,7 @@ public class CouchbaseClient {
 	public boolean isRebalancing() {
 		GetRequest message = new GetRequest(hostname, "/pools/default/rebalanceProgress", username, password);
 		CouchbaseResponse response = conn.sendRequest(message);
-		
+			
 		try {
 			JSON nodes = JSON.parse(response.getBody());
 			if (((String) nodes.get("status").value()).equals("running"))
@@ -180,7 +185,7 @@ public class CouchbaseClient {
 	/**
 	 * Fails over a node in the cluster.
 	 * @param host The node to fail over.
-	 * @return An http rrsponse from the cluster.
+	 * @return An http response from the cluster.
 	 */
 	public CouchbaseResponse failover(String host) {
 		PostRequest message = new PostRequest(hostname, "/controller/failOver", username, password);
@@ -253,24 +258,47 @@ public class CouchbaseClient {
 		return response;
 	}
 	
-	public CouchbaseResponse createMembaseBucket(String name, int memorySizeMB, String authType, int replicas, int port) {
+	/**
+	 * Creates a new Membase bucket.
+	 * @param name The name of the bucket.
+	 * @param memorySizeMB The size of the bucket in megabytes.
+	 * @param authType "none" for no authentication, "sasl" for authentication.
+	 * @param replicas The number of replicas.
+	 * @param port The port to put the bucket on.
+	 * @param password The password for the bucket.
+	 * @return An http response from the cluster.
+	 */
+	public CouchbaseResponse createMembaseBucket(String name, int memorySizeMB, String authType, int replicas, int port, String password) {
 		PostRequest message = new PostRequest(hostname, "/pools/default/buckets", username, password);
 		message.addParam("name", name);
 		message.addParam("ramQuotaMB", (memorySizeMB + ""));
 		message.addParam("authType", authType);
 		message.addParam("replicaNumber", (replicas + ""));
 		message.addParam("proxyPort", (port + ""));
+		if (authType.equals("sasl"))
+			message.addParam("saslpassword", password);
 		CouchbaseResponse response = conn.sendRequest(message);
 		return response;
 	}
 	
-	public CouchbaseResponse createMemcachedBucket(String name, int memorySizeMB, String authType, int port) {
+	/**
+	 * Creates a Memcached bucket.
+	 * @param name The name of the bucket.
+	 * @param memorySizeMB The size of the bucket in megabytes.
+	 * @param authType "none" for no authentication, "sasl" for authentication.
+	 * @param port The port number for the server to listen on.
+	 * @param password The password for the bucket.
+	 * @return An http response from the server.
+	 */
+	public CouchbaseResponse createMemcachedBucket(String name, int memorySizeMB, String authType, int port, String password) {
 		PostRequest message = new PostRequest(hostname, "/pools/default/buckets", username, password);
 		message.addParam("name", name);
 		message.addParam("ramQuotaMB", (memorySizeMB + ""));
 		message.addParam("authType", authType);
 		message.addParam("proxyPort", (port + ""));
 		message.addParam("bucketType", "memcached");
+		if (authType.equals("sasl"))
+			message.addParam("saslpassword", password);
 		CouchbaseResponse response = conn.sendRequest(message);
 		return response;
 	}
@@ -292,10 +320,10 @@ public class CouchbaseClient {
 	
 	/**
 	 * Currently not implemented in Membase server.
-	 * @return An error maessage.
+	 * @return An error message.
 	 */
 	public String bucketFlush() {
-		return "Not implemented by Membase REST API";
+		return "Not implemented by Couchbase REST API";
 	}
 	
 	public static void main(String args[]) {
@@ -307,16 +335,17 @@ public class CouchbaseClient {
 		//System.out.println(client.configureClusterSize(1024).getBody());
 		//System.out.println(client.setCredentials(username, password).getBody());
 		//System.out.println(client.listServers());
-		//System.out.println(client.createMembaseBucket("bucket", 128, "none", 1, 11212).getBody());
-		//System.out.println(client.createMembaseBucket("bucket2", 128, "none", 1, 11213).getBody());
+		//System.out.println(client.createMembaseBucket("bucket3", 128, "none", 1, 11214, "password").getBody());
+		//System.out.println(client.createMemcachedBucket("bucket4", 128, "none", 11221, "password").getBody());
 		
 		//CouchbaseResponse r = client.getBucketInfo("bucket3");
 		//System.out.println(r.getReturnCode());
 		//System.out.println(r.getBody());
 		
 		//System.out.println(client.bucketDelete("bucket").getReturnCode());
-		System.out.println(client.failover("10.2.1.54").getBody());
-		/*System.out.println(client.serverReadd("10.2.1.54").getBody());
+		/*System.out.println(client.failover("10.2.1.54").getBody());
+		System.out.println(client.serverReadd("10.2.1.54").getBody());
+		System.out.println(client.rebalance(null).getBody());
 		System.out.println(client.rebalance(null).getBody());
 		
 		while (client.isRebalancing()) {
