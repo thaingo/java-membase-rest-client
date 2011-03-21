@@ -11,17 +11,32 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.protocol.HTTP;
 
+/**
+ * Holds details from a REST response.
+ */
 public class CouchbaseResponse {
-	HttpResponse response;
+	private HttpResponse response;
 	
+	/**
+	 * Creates a CouchbaseResponse.
+	 * @param response The http response from the server.
+	 */
 	public CouchbaseResponse(HttpResponse response) {
 		this.response = response;
 	}
 	
+	/**
+	 * Gets the return code for the response.
+	 * @return The return code.
+	 */
 	public int getReturnCode() {
 		return response.getStatusLine().getStatusCode();
 	}
 	
+	/**
+	 * Gets the content in the body ofn the http response.
+	 * @return
+	 */
 	public String getBody() {
 		HttpEntity entity = response.getEntity();
 
