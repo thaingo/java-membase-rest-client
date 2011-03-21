@@ -10,6 +10,11 @@ import com.couchbase.cli.message.GetRequest;
 import com.couchbase.cli.message.PostRequest;
 import com.freebase.json.JSON;
 
+/**
+ * This class provides an interface to a variety of Couchbase REST API requests. By 
+ * calling these functions the user is able to simulate anything that happens in the
+ * Couchbase admin interface.
+ */
 public class CouchbaseClient {
 	private static final Logger LOG = LoggerFactory.getLogger(CouchbaseClient.class);
 	private CouchbaseConnection conn;
