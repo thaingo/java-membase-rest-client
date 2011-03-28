@@ -271,10 +271,10 @@ public class CouchbaseClient {
 	 * @param authType The authorization type for the bucket.
 	 * @param replicas The number of replicas.
 	 * @param port The port to put the bucket on.
-	 * @param password The password for the bucket.
+	 * @param authpassword The password for the bucket.
 	 * @return An http response from the cluster.
 	 */
-	public CouchbaseResponse createMembaseBucket(String name, int memorySizeMB, Auth authType, int replicas, int port, String password) {
+	public CouchbaseResponse createMembaseBucket(String name, int memorySizeMB, Auth authType, int replicas, int port, String authpassword) {
 		PostRequest message = new PostRequest(hostname, "/pools/default/buckets", username, password);
 		message.addParam("name", name);
 		message.addParam("ramQuotaMB", (memorySizeMB + ""));
@@ -282,7 +282,7 @@ public class CouchbaseClient {
 		message.addParam("replicaNumber", (replicas + ""));
 		message.addParam("proxyPort", (port + ""));
 		if (authType == Auth.SASL)
-			message.addParam("saslpassword", password);
+			message.addParam("saslpassword", authpassword);
 		CouchbaseResponse response = conn.sendRequest(message);
 		return response;
 	}
@@ -293,10 +293,10 @@ public class CouchbaseClient {
 	 * @param memorySizeMB The size of the bucket in megabytes.
 	 * @param authType The authorization type for the bucket.
 	 * @param port The port number for the server to listen on.
-	 * @param password The password for the bucket.
+	 * @param authpassword The password for the bucket.
 	 * @return An http response from the server.
 	 */
-	public CouchbaseResponse createMemcachedBucket(String name, int memorySizeMB, Auth authType, int port, String password) {
+	public CouchbaseResponse createMemcachedBucket(String name, int memorySizeMB, Auth authType, int port, String authpassword) {
 		PostRequest message = new PostRequest(hostname, "/pools/default/buckets", username, password);
 		message.addParam("name", name);
 		message.addParam("ramQuotaMB", (memorySizeMB + ""));
@@ -304,7 +304,7 @@ public class CouchbaseClient {
 		message.addParam("proxyPort", (port + ""));
 		message.addParam("bucketType", "memcached");
 		if (authType == Auth.SASL)
-			message.addParam("saslpassword", password);
+			message.addParam("saslpassword", authpassword);
 		CouchbaseResponse response = conn.sendRequest(message);
 		return response;
 	}
