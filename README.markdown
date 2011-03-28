@@ -12,13 +12,13 @@
 
 # Building
 
-  ant
+  mvn clean install
 
 A jar named jcli.jar will be created in the build directory.
 
 # Documentation
 
-  ant doc
+  I'll add a javadoc pluin soon. :-( 
 
 Check out docs/javadocs/index.html
 
